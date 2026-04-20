@@ -164,3 +164,17 @@ resource "aws_route_table_association" "database" {
   subnet_id      = aws_subnet.database[count.index].id
   route_table_id = aws_route_table.database.id
 }
+
+# create DB Subnet Group for RDS instance, which will be used in next module for creating RDS instance
+# Here db_subnet_group and assigning the DB subnets to it.
+resource "aws_db_subnet_group" "roboshop" {
+  name       = "${var.project}-${var.environment}"
+  subnet_ids = [aws_subnet.database[0].id,aws_subnet.database[1].id]
+
+  tags = merge(
+    local.common_tags,
+    {
+      Name = "${var.project}-${var.environment}"
+    }
+  )
+}
